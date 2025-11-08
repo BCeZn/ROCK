@@ -4,7 +4,8 @@
 
 # ROCK: Reinforcement Open Construction Kit
 
-<h4>🚀 Reinforcement Learning Environment Toolkit 🚀</h4>
+<h4>🚀 An easy-to-use, massively scalable environment management framework for agentic reinforcement learning
+ 🚀</h4>
 
 <p>
   <a href="https://github.com/alibaba/ROCK/blob/main/LICENSE">
@@ -20,64 +21,22 @@
 
 </div>
 
-## Table of Contents
+ROCK (Reinforcement Open Construction Kit) is a easy-to-use, and scalable sandbox environment management framework, primarily for agentic reinforcement learning environments. It provides tools for building, managing, and scheduling reinforcement learning environments, suitable for development, testing, and research scenarios.
 
-1. [Introduction](#introduction)
-2. [Core Features](#-core-features)
-3. [Latest Updates](#-latest-updates)
-4. [Quick Start](#-quick-start)
-   - [Project Management](#project-management)
-     - [Important Notes](#important-notes)
-   - [Using Env Protocol](#using-env-protocol)
-   - [Sandbox SDK Usage](#sandbox-sdk-usage)
-5. [System Architecture](#-system-architecture)
-   - [Technical Components](#technical-components)
-     - [SDK Components](#sdk-components)
-     - [Admin Management Server](#admin-management-server)
-     - [Support Read-Write Separation Architecture](#support-read-write-separation-architecture)
-   - [Core Technologies](#core-technologies)
-   - [GEM Protocol Support](#gem-protocol-support)
-6. [Configuration](#-configuration)
-   - [Server Configuration](#server-configuration)
-   - [Development Environment Configuration](#development-environment-configuration)
-7. [Contribution](#-contribution)
-   - [Development Setup](#development-setup)
-   - [Reporting Issues](#reporting-issues)
-   - [Code Style](#code-style)
-8. [License](#-license)
-9. [Acknowledgements](#-acknowledgements)
+ROCK adopts a client-server architecture, supports different levels of isolation mechanisms to ensure stable environment operation, and supports integration with various reinforcement learning training frameworks through SDK. ROCK not only supports traditional sandbox management functions but also is compatible with GEM-like protocols, providing standardized interfaces for reinforcement learning environments.
 
-## Introduction
+## 🚀 Get Started
+[Documents](https://alibaba.github.io/ROCK/)
 
-ROCK (Reinforcement Open Construction Kit) is a comprehensive sandbox environment management framework, primarily for reinforcement learning and AI development environments. It provides tools for building, running, and managing isolated containerized environments, suitable for development, testing, and research scenarios.
+### Quick Start
 
-ROCK adopts a client-server architecture, uses Docker for containerization, and seamlessly integrates with modern development workflows. ROCK not only supports traditional sandbox management functions but also complies with the GEM protocol, providing standardized interfaces for reinforcement learning environments.
+[Installation](https://alibaba.github.io/ROCK/docs/installation)  
+[Quick Start](https://alibaba.github.io/ROCK/docs/quickstart)  
+[Configuration](https://alibaba.github.io/ROCK/docs/configuration)  
+[API References](https://alibaba.github.io/ROCK/docs/api)
 
 ---
-
-## 🚀 Core Features
-
-* **Multi-Protocol Action Support**: Supports multiple action protocols including GEM, Bash, and Chat.
-* **Sandbox Runtime**: Stateful runtime environments with multiple isolation mechanisms to ensure consistency and security
-* **Flexible Deployment**: Supports different deployment methods for diverse environment requirements and Operating System
-* **Unified SDK Interface**: Clean Python SDK for Env and Sandbox interaction
-* **Layered Service Architecture**: Distributed Admin, Worker, and Rocklet architecture for scalable resource management
-* **Efficient Resource Management**: Automatic sandbox lifecycle management with configurable resource allocation
-
----
-
-## 📢 Latest Updates
-
-| 📣 Update Content |
-|:-----------|
-| **[Latest]** 🎉 ROCK v0.2.0 Released |
-
----
-
-## 🚀 Quick Start
-
-### Project Management
-ROCK uses `uv` for dependency management and virtual environment management, ensuring fast and consistent environment configuration:
+Intall ROCK with `pip` or source:
 
 ```bash
 # Clone repository
@@ -94,20 +53,15 @@ uv sync --all-extras
 source .venv/bin/activate
 ```
 
-You can find more details in [quickstart.md](docs/docs/rock/quickstart.md)
-
-#### Important Notes
-
-**Important**: ROCK depends on Docker and uv tools for environment management.
+**Notes**: ROCK depends on Docker and uv tools for environment management.
 
 1. **Python Environment Configuration**: To ensure ROCK can correctly mount the project and virtual environment along with its base Python interpreter, it is strongly recommended to use uv-managed Python environments to create virtual environments rather than system Python. This can be achieved through the `--python-preference only-managed` parameter.
-If you don't want to use uv to manage the environment, you can refer to [installation.md](docs/docs/rock/installation.md) for installation and refer to [configuration.md](docs/docs/rock/configuration.md) for UV runtime environment startup.
 
 2. **Distributed Environment Consistency**: In distributed multi-machine environments, please ensure that all machines use the same root Python interpreter for ROCK and uv Python configurations to avoid environment inconsistencies.
 
 3. **Dependency Management**: Use the `uv` command to install all dependency groups, ensuring consistency between development, testing, and production environments.
 
-4. **OS Support**: ROCK recommends managing environments on the same operating system, such as managing Linux image environments on a Linux system. However, it also supports cross-operating system level image management, for example, launching Ubuntu images on MacOS. For specific details, please refer to the MacOS Launch section in [quickstart.md](docs/docs/rock/quickstart.md)
+4. **OS Support**: ROCK recommends managing environments on the same operating system, such as managing Linux image environments on a Linux system. However, it also supports cross-operating system level image management, for example, launching Ubuntu images on MacOS. 
 
 ### Using Env Protocol
 ROCK is fully compatible with the GEM protocol, providing standardized environment interfaces:
@@ -156,6 +110,25 @@ async def run_sandbox():
 if __name__ == "__main__":
     asyncio.run(run_sandbox())
 ```
+
+---
+
+## 🚀 Core Features
+
+* **Multi-Protocol Action Support**: Supports multiple action protocols including GEM, Bash, and Chat.
+* **Sandbox Runtime**: Stateful runtime environments with multiple isolation mechanisms to ensure consistency and security
+* **Flexible Deployment**: Supports different deployment methods for diverse environment requirements and Operating System
+* **Unified SDK Interface**: Clean Python SDK for Env and Sandbox interaction
+* **Layered Service Architecture**: Distributed Admin, Worker, and Rocklet architecture for scalable resource management
+* **Efficient Resource Management**: Automatic sandbox lifecycle management with configurable resource allocation
+
+---
+
+## 📢 Latest Updates
+
+| 📣 Update Content |
+|:-----------|
+| **[Latest]** 🎉 ROCK v0.2.0 Released |
 
 ---
 
@@ -257,7 +230,7 @@ Special thanks to:
 
 ---
 
-## 🤝 About [ROCK & ROLL Team]
+## 🤝 About [ROCK n ROLL Team]
 ROCK is a project jointly developed by Taotian Future Living Lab and Alibaba AI Engine Team, with a strong emphasis on pioneering the future of Reinforcement Learning (RL). Our mission is to explore and shape innovative forms of future living powered by advanced RL technologies. If you are passionate about the future of RL and want to be part of its evolution, we warmly welcome you to join us! 
 
 For more information about **ROLL**, please visit:
