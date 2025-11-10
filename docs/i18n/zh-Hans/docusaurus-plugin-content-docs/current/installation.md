@@ -43,7 +43,34 @@ uv sync --all-extras --group test
 
 ## 使用 pip
 
-### 使用 pip 安装
+### 从 pip 源安装
+
+#### 仅核心依赖
+```bash
+pip install rl-rock
+```
+
+#### 管理组件依赖
+```bash
+pip install "rl-rock[admin]"
+```
+
+#### Rocklet 执行环境依赖
+```bash
+pip install "rl-rock[rocklet]"
+```
+
+#### 构建器依赖
+```bash
+pip install "rl-rock[builder]"
+```
+
+#### 安装所有可选依赖
+```bash
+pip install "rl-rock[all]"
+```
+
+### 使用 pip 从源码安装
 
 #### 仅核心依赖
 ```bash

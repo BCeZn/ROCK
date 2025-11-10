@@ -44,7 +44,34 @@ uv sync --all-extras --group test
 
 ## Using pip
 
-### Install with pip
+### Install from pip source
+
+#### Core Dependencies Only
+```bash
+pip install rl-rock
+```
+
+#### Admin Component Dependencies
+```bash
+pip install "rl-rock[admin]"
+```
+
+#### Rocklet Execution Environment Dependencies
+```bash
+pip install "rl-rock[rocklet]"
+```
+
+#### Builder Dependencies
+```bash
+pip install "rl-rock[builder]"
+```
+
+#### Install All Optional Dependencies
+```bash
+pip install "rl-rock[all]"
+```
+
+### Install with pip from source code
 
 #### Core Dependencies Only
 ```bash
