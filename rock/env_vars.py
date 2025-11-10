@@ -40,7 +40,7 @@ environment_variables: dict[str, Callable[[], Any]] = {
     "ROCK_LOGGING_FILE_NAME": lambda: os.getenv("ROCK_LOGGING_FILE_NAME", "rocklet.log"),
     "ROCK_LOGGING_LEVEL": lambda: os.getenv("ROCK_LOGGING_LEVEL", "INFO"),
     "ROCK_CONFIG": lambda: os.getenv("ROCK_CONFIG"),
-    "ROCK_CONFIG_DIR_NAME": lambda: os.getenv("ROCK_CONFIG_DIR_NAME", "conf"),
+    "ROCK_CONFIG_DIR_NAME": lambda: os.getenv("ROCK_CONFIG_DIR_NAME", "rock-conf"),
     "ROCK_BASE_URL": lambda: os.getenv("ROCK_BASE_URL", "http://localhost:8080"),
     "ROCK_SANDBOX_STARTUP_TIMEOUT_SECONDS": lambda: int(os.getenv("ROCK_SANDBOX_STARTUP_TIMEOUT_SECONDS", "180")),
     "ROCK_CODE_SANDBOX_BASE_URL": lambda: os.getenv("ROCK_CODE_SANDBOX_BASE_URL", ""),

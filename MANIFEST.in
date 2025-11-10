@@ -1,5 +1,6 @@
-# MANIFEST.in - Exclude unnecessary files/directories from source distribution
+# MANIFEST.in - Include necessary files/directories in source distribution
 
+recursive-include conf *
 recursive-exclude tests *
 recursive-exclude examples *
 recursive-exclude docs *
