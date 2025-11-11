@@ -11,7 +11,6 @@ from fastapi import UploadFile
 
 from rock import env_vars
 from rock.actions import (
-    BashInterruptAction,
     BashObservation,
     CloseBashSessionResponse,
     CommandResponse,
@@ -28,14 +27,13 @@ from rock.config import OssConfig, RockConfig
 from rock.deployments.constants import Port
 from rock.deployments.status import ServiceStatus
 from rock.logger import init_logger
-from rock.rocklet.proto.request import (
-    InternalBashAction,
-    InternalCloseBashSessionRequest,
-    InternalCommand,
-    InternalCreateSessionRequest,
-    InternalReadFileRequest,
-    InternalWriteFileRequest,
-)
+from rock.rocklet.proto.request import BashInterruptAction
+from rock.rocklet.proto.request import InternalBashAction as BashAction
+from rock.rocklet.proto.request import InternalCloseBashSessionRequest as CloseBashSessionRequest
+from rock.rocklet.proto.request import InternalCommand as Command
+from rock.rocklet.proto.request import InternalCreateSessionRequest as CreateSessionRequest
+from rock.rocklet.proto.request import InternalReadFileRequest as ReadFileRequest
+from rock.rocklet.proto.request import InternalWriteFileRequest as WriteFileRequest
 from rock.utils.providers import RedisProvider
 
 logger = init_logger(__name__)
@@ -56,7 +54,7 @@ class SandboxReadService:
         )
 
     @monitor_sandbox_operation()
-    async def create_session(self, request: InternalCreateSessionRequest) -> CreateBashSessionResponse:
+    async def create_session(self, request: CreateSessionRequest) -> CreateBashSessionResponse:
         sandbox_id = request.container_name
         await self._update_expire_time(sandbox_id)
         sandbox_status_dicts = await self.get_service_status(sandbox_id)
@@ -66,7 +64,7 @@ class SandboxReadService:
         return CreateBashSessionResponse(**response)
 
     @monitor_sandbox_operation()
-    async def run_in_session(self, action: InternalBashAction | BashInterruptAction) -> BashObservation:
+    async def run_in_session(self, action: BashAction | BashInterruptAction) -> BashObservation:
         sandbox_id = action.container_name
         await self._update_expire_time(sandbox_id)
         sandbox_status_dicts = await self.get_service_status(sandbox_id)
@@ -76,7 +74,7 @@ class SandboxReadService:
         return BashObservation(**response)
 
     @monitor_sandbox_operation()
-    async def close_session(self, request: InternalCloseBashSessionRequest) -> CloseBashSessionResponse:
+    async def close_session(self, request: CloseBashSessionRequest) -> CloseBashSessionResponse:
         sandbox_id = request.container_name
         await self._update_expire_time(sandbox_id)
         sandbox_status_dicts = await self.get_service_status(sandbox_id)
@@ -92,7 +90,7 @@ class SandboxReadService:
         return IsAliveResponse(**response)
 
     @monitor_sandbox_operation()
-    async def read_file(self, request: InternalReadFileRequest) -> ReadFileResponse:
+    async def read_file(self, request: ReadFileRequest) -> ReadFileResponse:
         sandbox_id = request.container_name
         await self._update_expire_time(sandbox_id)
         sandbox_status_dicts = await self.get_service_status(sandbox_id)
@@ -102,7 +100,7 @@ class SandboxReadService:
         return ReadFileResponse(**response)
 
     @monitor_sandbox_operation()
-    async def write_file(self, request: InternalWriteFileRequest) -> WriteFileResponse:
+    async def write_file(self, request: WriteFileRequest) -> WriteFileResponse:
         sandbox_id = request.container_name
         await self._update_expire_time(sandbox_id)
         sandbox_status_dicts = await self.get_service_status(sandbox_id)
@@ -121,7 +119,7 @@ class SandboxReadService:
         return UploadResponse(**response)
 
     @monitor_sandbox_operation()
-    async def execute(self, command: InternalCommand) -> CommandResponse:
+    async def execute(self, command: Command) -> CommandResponse:
         sandbox_id = command.container_name
         await self._update_expire_time(sandbox_id)
         sandbox_status_dicts = await self.get_service_status(sandbox_id)
@@ -232,7 +230,7 @@ class SandboxReadService:
         #     return "ws://127.0.0.1:8090/acp"
         # if sandbox_id == "local":   # Local debugging for general ws service
         #     return "ws://127.0.0.1:8090/ws"
-        # Get sandbox internal address based on sandbox_id
+        # Get sandbox  address based on sandbox_id
         status_dicts = await self.get_service_status(sandbox_id)
         host_ip = status_dicts[0].get("host_ip")
         service_status = ServiceStatus.from_dict(status_dicts[0])

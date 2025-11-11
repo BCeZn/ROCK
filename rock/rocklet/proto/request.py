@@ -70,3 +70,20 @@ class InternalWriteFileRequest(SandboxWriteFileRequest):
 
 
 InternalUploadRequest = UploadRequest
+
+
+class BashInterruptAction(BaseModel):
+    command: str = "interrupt"
+
+    session: str = "default"
+
+    timeout: float = 0.2
+    """The timeout for the command. None means no timeout."""
+
+    n_retry: int = 3
+    """How many times to retry quitting."""
+
+    expect: list[str] = []
+    """Outputs to expect in addition to the PS1"""
+
+    action_type: Literal["bash_interrupt"] = "bash_interrupt"

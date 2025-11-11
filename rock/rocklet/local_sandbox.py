@@ -19,7 +19,6 @@ from typing_extensions import Self
 
 from rock.actions import (
     AbstractSandbox,
-    BashInterruptAction,
     BashObservation,
     CloseBashSessionResponse,
     CloseResponse,
@@ -49,6 +48,7 @@ from rock.rocklet.exceptions import (
     SessionExistsError,
     SessionNotInitializedError,
 )
+from rock.rocklet.proto.request import BashInterruptAction
 from rock.rocklet.proto.request import InternalAction as Action
 from rock.rocklet.proto.request import InternalBashAction as BashAction
 from rock.rocklet.proto.request import InternalCloseSessionRequest as CloseSessionRequest

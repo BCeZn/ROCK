@@ -9,7 +9,6 @@ import ray
 from fastapi import UploadFile
 
 from rock.actions import (
-    BashInterruptAction,
     BashObservation,
     CloseBashSessionResponse,
     CommandResponse,
@@ -25,6 +24,7 @@ from rock.deployments.constants import Status
 from rock.deployments.docker import DockerDeployment
 from rock.deployments.status import ServiceStatus
 from rock.logger import init_logger
+from rock.rocklet.proto.request import BashInterruptAction
 from rock.rocklet.proto.request import InternalBashAction as BashAction
 from rock.rocklet.proto.request import InternalCloseBashSessionRequest as CloseBashSessionRequest
 from rock.rocklet.proto.request import InternalCommand as Command
