@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     ROCK_CODE_SANDBOX_BASE_URL: str | None = None
     ROCK_ENVHUB_BASE_URL: str | None = "http://localhost:8081"
     ROCK_ENVHUB_DEFAULT_DOCKER_IMAGE: str | None = "python:3.11"
-    ROCK_ENVHUB_DB_URL: str | None = "sqlite:///./rock_envs.db"
+    ROCK_ENVHUB_DB_URL: str | None = f"sqlite:///{Path.home() / '.rock' / 'rock_envs.db'}"
     ROCK_DEFAULT_AUTO_CLEAR_TIME_MINUTES: int = 60 * 6  # 6 hours
     ROCK_RAY_NAMESPACE: str | None = "xrl-sandbox"
     ROCK_SANDBOX_EXPIRE_TIME_KEY: str | None = "expire_time"

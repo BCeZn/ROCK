@@ -31,7 +31,7 @@ class GemManager(SandboxManager):
         super().__init__(rock_config, redis_provider, ray_namespace, enable_runtime_auto_clear)
 
     async def env_make(self, env_id: str) -> EnvMakeResponse:
-        config = DockerDeploymentConfig(image="python:3.11")
+        config = DockerDeploymentConfig(image=env_vars.ROCK_ENVHUB_DEFAULT_DOCKER_IMAGE)
         sandbox_start_response: SandboxStartResponse = await self.start_async(config=config)
 
         async def wait_until_alive(sandbox_id: str, interval: float = 1.0):
