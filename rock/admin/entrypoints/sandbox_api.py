@@ -38,20 +38,20 @@ def set_sandbox_manager(service: SandboxManager):
 
 @sandbox_router.post("/start")
 @handle_exceptions(error_message="start sandbox failed")
-async def start(config: SandboxStartRequest) -> RockResponse[SandboxStartResponse]:
-    sandbox_start_response = await sandbox_manager.start(DockerDeploymentConfig.from_request(config))
+async def start(request: SandboxStartRequest) -> RockResponse[SandboxStartResponse]:
+    sandbox_start_response = await sandbox_manager.start(DockerDeploymentConfig.from_request(request))
     return RockResponse(result=sandbox_start_response)
 
 
 @sandbox_router.post("/start_async")
 @handle_exceptions(error_message="async start sandbox failed")
 async def start_async(
-    config: SandboxStartRequest,
+    request: SandboxStartRequest,
     x_user_id: str | None = Header(default="default", alias="X-User-Id"),
     x_experiment_id: str | None = Header(default="default", alias="X-Experiment-Id"),
 ) -> RockResponse[SandboxStartResponse]:
     sandbox_start_response = await sandbox_manager.start_async(
-        DockerDeploymentConfig.from_request(config),
+        DockerDeploymentConfig.from_request(request),
         user_info={"user_id": x_user_id, "experiment_id": x_experiment_id},
     )
     return RockResponse(result=sandbox_start_response)

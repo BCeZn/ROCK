@@ -15,9 +15,9 @@ from rock.actions import (
     UploadResponse,
     WriteFileResponse,
 )
-from rock.actions.sandbox.request import Action
 from rock.admin.core.redis_key import ALIVE_PREFIX, alive_sandbox_key, timeout_sandbox_key
 from rock.admin.metrics.decorator import monitor_sandbox_operation
+from rock.admin.proto.request import SandboxAction as Action
 from rock.admin.proto.request import SandboxCloseBashSessionRequest as CloseBashSessionRequest
 from rock.admin.proto.request import SandboxCommand as Command
 from rock.admin.proto.request import SandboxCreateSessionRequest as CreateSessionRequest
@@ -25,7 +25,7 @@ from rock.admin.proto.request import SandboxReadFileRequest as ReadFileRequest
 from rock.admin.proto.request import SandboxWriteFileRequest as WriteFileRequest
 from rock.admin.proto.response import SandboxStartResponse, SandboxStatusResponse
 from rock.config import RockConfig
-from rock.deployments.config import DeploymentConfig
+from rock.deployments.config import DeploymentConfig, DockerDeploymentConfig
 from rock.deployments.constants import Status
 from rock.deployments.status import PhaseStatus, ServiceStatus
 from rock.logger import init_logger
@@ -83,7 +83,7 @@ class SandboxManager(BaseManager):
 
     @monitor_sandbox_operation()
     async def start_async(self, config: DeploymentConfig, user_info: dict = {}) -> SandboxStartResponse:
-        docker_deployment_config = await self.deployment_manager.init_config(config)
+        docker_deployment_config: DockerDeploymentConfig = await self.deployment_manager.init_config(config)
 
         sandbox_id = docker_deployment_config.container_name
         actor_name = self.deployment_manager.get_actor_name(sandbox_id)
@@ -117,7 +117,7 @@ class SandboxManager(BaseManager):
 
     @monitor_sandbox_operation()
     async def start(self, config: DeploymentConfig) -> SandboxStartResponse:
-        docker_deployment_config = await self.deployment_manager.init_config(config)
+        docker_deployment_config: DockerDeploymentConfig = await self.deployment_manager.init_config(config)
 
         sandbox_id = docker_deployment_config.container_name
         actor_name = self.deployment_manager.get_actor_name(sandbox_id)
