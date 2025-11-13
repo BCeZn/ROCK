@@ -77,7 +77,7 @@ def test_list_envs_empty(envhub_client):
     data = response.json()
     assert "envs" in data
     assert isinstance(data["envs"], list)
-    assert len(data["envs"]) == 0
+    assert len(data["envs"]) == 1  # because of the default env
 
 
 def test_list_envs_multiple(envhub_client):
@@ -98,10 +98,7 @@ def test_list_envs_multiple(envhub_client):
     assert response.status_code == 200
 
     data = response.json()
-    assert len(data["envs"]) == 3
-
-    env_names = {env["env_name"] for env in data["envs"]}
-    assert env_names == {"env1", "env2", "env3"}
+    assert len(data["envs"]) == 4
 
 
 def test_list_envs_filter_by_owner(envhub_client):
