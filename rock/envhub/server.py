@@ -20,7 +20,7 @@ app = FastAPI(title="EnvHub API", description="Environment management service fo
 env_hub = None
 
 
-def initialize_env_hub(db_url: str = "sqlite:///rock_envs.db"):
+def initialize_env_hub(db_url):
     """Initialize EnvHub instance, only supports database URL configuration"""
     global env_hub
     env_hub = DockerEnvHub(db_url=db_url)

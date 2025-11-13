@@ -1,6 +1,7 @@
 """EnvHub core implementation"""
 
 import logging
+import subprocess
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from datetime import datetime
@@ -8,6 +9,7 @@ from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
+from rock import env_vars
 from rock.envhub.api.schemas import DeleteEnvRequest, EnvInfo, GetEnvRequest, ListEnvsRequest, RegisterRequest
 from rock.envhub.database.base import Base
 from rock.envhub.database.docker_env import RockDockerEnv
@@ -19,7 +21,7 @@ logger = logging.getLogger(__name__)
 class EnvHub(ABC):
     """EnvHub abstract base class"""
 
-    def __init__(self, db_url: str = "sqlite:///./rock_envs.db"):
+    def __init__(self, db_url: str | None = None):
         """
         Initialize EnvHub
 
@@ -80,20 +82,121 @@ class EnvHub(ABC):
         """
         pass
 
+    @abstractmethod
+    def check_envs_available(self) -> bool:
+        """
+        Check if all existing environments have their docker images available locally.
+        This checks if the docker image for each environment exists locally.
+
+        Returns:
+            True if all environment docker images are available, False if any is not available
+        """
+        pass
+
 
 class DockerEnvHub(EnvHub):
     """Docker environment Hub class, inherited from EnvHub"""
 
-    def __init__(self, db_url: str = "sqlite:///./rock_envs.db"):
+    DEFAULT_ENV_NAME = "EnvhubDefaultDockerImage"
+
+    def __init__(self, db_url: str | None = None):
         """
         Initialize DockerEnvHub
 
         Args:
             db_url: Database URL
         """
+        if not db_url:
+            db_url = env_vars.ROCK_ENVHUB_DB_URL
         super().__init__(db_url=db_url)
         self.engine = create_engine(db_url, echo=False)
         Base.metadata.create_all(self.engine)
+
+        # pre-check env
+        self.init_default_env()
+
+    def init_default_env(self):
+        """
+        Initialize default environment
+        Checks if an environment with env_name DEFAULT_ENV_NAME exists in db,
+        creates it if it doesn't exist using the register method
+        """
+        default_docker_image = env_vars.ROCK_ENVHUB_DEFAULT_DOCKER_IMAGE
+
+        if not default_docker_image:
+            logger.warning("No default docker image specified, skipping initialization")
+            return
+
+        # Check if environment already exists using get_env
+        try:
+            existing_env = self.get_env(GetEnvRequest(env_name=self.DEFAULT_ENV_NAME))
+            logger.info(f"Default environment already exists: {self.DEFAULT_ENV_NAME}, env_info: {existing_env}")
+        except Exception:
+            # Environment doesn't exist, so create it using the register method
+            from rock.envhub.api.schemas import RegisterRequest
+
+            register_request = RegisterRequest(
+                env_name=self.DEFAULT_ENV_NAME,
+                image=default_docker_image,
+                owner="ENVHUB",
+                description="Default docker environment provided by EnvHub",
+                tags=["default", "system", "envhub"],
+                extra_spec={},
+            )
+            self.register(register_request)
+            logger.info(f"Created default environment: {self.DEFAULT_ENV_NAME} with image {default_docker_image}")
+
+    def check_envs_available(self) -> bool:
+        """
+        Check if all existing environments have their docker images available locally.
+        This checks if the docker image for each environment exists locally using docker CLI.
+
+        Returns:
+            True if all environment docker images are available, False if any is not available
+        """
+        try:
+            # Check if docker command is available
+            result = subprocess.run(["docker", "images"], capture_output=True, text=True, timeout=10)
+            if result.returncode != 0:
+                logger.error("Docker is not installed or not accessible")
+                return False
+
+            # Get all environments from database
+            with self.get_session() as session:
+                all_envs = session.query(RockDockerEnv).all()
+
+                for db_env in all_envs:
+                    image = db_env.image
+                    try:
+                        # Use docker inspect to check if image exists
+                        result = subprocess.run(
+                            ["docker", "image", "inspect", image], capture_output=True, text=True, timeout=10
+                        )
+
+                        if result.returncode == 0:
+                            logger.info(f"Environment {db_env.env_name} with image {image} is available")
+                        else:
+                            logger.info(f"Docker image {image} not found locally for environment {db_env.env_name}")
+                            return False
+
+                    except subprocess.TimeoutExpired:
+                        logger.error(f"Timeout checking docker image for environment {db_env.env_name}")
+                        return False
+                    except Exception as e:
+                        logger.error(f"Error checking docker image for environment {db_env.env_name}: {e}")
+                        return False
+
+        except subprocess.TimeoutExpired:
+            logger.error("Timeout checking docker availability")
+            return False
+        except FileNotFoundError:
+            logger.error("Docker command not found, cannot check environment availability")
+            return False
+        except Exception as e:
+            logger.error(f"Failed to check environments availability: {e}")
+            return False
+
+        return True
 
     @contextmanager
     def get_session(self):

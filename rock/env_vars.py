@@ -14,6 +14,8 @@ if TYPE_CHECKING:
     ROCK_SANDBOX_STARTUP_TIMEOUT_SECONDS: int = 180
     ROCK_CODE_SANDBOX_BASE_URL: str | None = None
     ROCK_ENVHUB_BASE_URL: str | None = "http://localhost:8081"
+    ROCK_ENVHUB_DEFAULT_DOCKER_IMAGE: str | None = "python:3.11"
+    ROCK_ENVHUB_DB_URL: str | None = "sqlite:///./rock_envs.db"
     ROCK_DEFAULT_AUTO_CLEAR_TIME_MINUTES: int = 60 * 6  # 6 hours
     ROCK_RAY_NAMESPACE: str | None = "xrl-sandbox"
     ROCK_SANDBOX_EXPIRE_TIME_KEY: str | None = "expire_time"
@@ -45,6 +47,8 @@ environment_variables: dict[str, Callable[[], Any]] = {
     "ROCK_SANDBOX_STARTUP_TIMEOUT_SECONDS": lambda: int(os.getenv("ROCK_SANDBOX_STARTUP_TIMEOUT_SECONDS", "180")),
     "ROCK_CODE_SANDBOX_BASE_URL": lambda: os.getenv("ROCK_CODE_SANDBOX_BASE_URL", ""),
     "ROCK_ENVHUB_BASE_URL": lambda: os.getenv("ROCK_ENVHUB_BASE_URL", "http://localhost:8081"),
+    "ROCK_ENVHUB_DEFAULT_DOCKER_IMAGE": lambda: os.getenv("ROCK_ENVHUB_DEFAULT_DOCKER_IMAGE", "python:3.11"),
+    "ROCK_ENVHUB_DB_URL": lambda: os.getenv("ROCK_ENVHUB_DB_URL", "sqlite:///./rock_envs.db"),
     "ROCK_DEFAULT_AUTO_CLEAR_TIME_MINUTES": lambda: int(os.getenv("ROCK_DEFAULT_AUTO_CLEAR_TIME_MINUTES", "360")),
     "ROCK_RAY_NAMESPACE": lambda: os.getenv("ROCK_RAY_NAMESPACE", "xrl-sandbox"),
     "ROCK_SANDBOX_EXPIRE_TIME_KEY": lambda: os.getenv("ROCK_SANDBOX_EXPIRE_TIME_KEY", "expire_time"),
