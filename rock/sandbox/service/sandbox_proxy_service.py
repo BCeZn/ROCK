@@ -65,7 +65,7 @@ class SandboxProxyService:
 
     @monitor_sandbox_operation()
     async def create_session(self, request: CreateSessionRequest) -> CreateBashSessionResponse:
-        sandbox_id = request.container_name
+        sandbox_id = request.sandbox_id
         await self._update_expire_time(sandbox_id)
         sandbox_status_dicts = await self.get_service_status(sandbox_id)
         response = await self._send_request(
@@ -75,7 +75,7 @@ class SandboxProxyService:
 
     @monitor_sandbox_operation()
     async def run_in_session(self, action: BashAction) -> BashObservation:
-        sandbox_id = action.container_name
+        sandbox_id = action.sandbox_id
         await self._update_expire_time(sandbox_id)
         sandbox_status_dicts = await self.get_service_status(sandbox_id)
         response = await self._send_request(
@@ -85,7 +85,7 @@ class SandboxProxyService:
 
     @monitor_sandbox_operation()
     async def close_session(self, request: CloseBashSessionRequest) -> CloseBashSessionResponse:
-        sandbox_id = request.container_name
+        sandbox_id = request.sandbox_id
         await self._update_expire_time(sandbox_id)
         sandbox_status_dicts = await self.get_service_status(sandbox_id)
         response = await self._send_request(
@@ -101,7 +101,7 @@ class SandboxProxyService:
 
     @monitor_sandbox_operation()
     async def read_file(self, request: ReadFileRequest) -> ReadFileResponse:
-        sandbox_id = request.container_name
+        sandbox_id = request.sandbox_id
         await self._update_expire_time(sandbox_id)
         sandbox_status_dicts = await self.get_service_status(sandbox_id)
         response = await self._send_request(
@@ -111,7 +111,7 @@ class SandboxProxyService:
 
     @monitor_sandbox_operation()
     async def write_file(self, request: WriteFileRequest) -> WriteFileResponse:
-        sandbox_id = request.container_name
+        sandbox_id = request.sandbox_id
         await self._update_expire_time(sandbox_id)
         sandbox_status_dicts = await self.get_service_status(sandbox_id)
         response = await self._send_request(
@@ -130,7 +130,7 @@ class SandboxProxyService:
 
     @monitor_sandbox_operation()
     async def execute(self, command: Command) -> CommandResponse:
-        sandbox_id = command.container_name
+        sandbox_id = command.sandbox_id
         await self._update_expire_time(sandbox_id)
         sandbox_status_dicts = await self.get_service_status(sandbox_id)
         response = await self._send_request(
