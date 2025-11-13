@@ -25,12 +25,6 @@ class SandboxStartRequest(BaseModel):
     cpus: float = 2
     """The amount of CPUs to allocate for the container."""
 
-    def transform(self):
-        from rock.deployments.config import DockerDeploymentConfig
-
-        res = DockerDeploymentConfig(**self.model_dump())
-        return res
-
 
 class SandboxCommand(Command):
     timeout: float | None = 1200
