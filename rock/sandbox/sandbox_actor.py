@@ -9,7 +9,6 @@ import ray
 from fastapi import UploadFile
 
 from rock.actions import (
-    BashInterruptAction,
     BashObservation,
     CloseBashSessionResponse,
     CommandResponse,
@@ -185,7 +184,7 @@ class SandboxActor(GemActor):
         await self._refresh_stop_time()
         return await self._deployment.runtime.create_session(request)
 
-    async def run_in_session(self, action: BashAction | BashInterruptAction) -> BashObservation:
+    async def run_in_session(self, action: BashAction) -> BashObservation:
         await self._refresh_stop_time()
         return await self._deployment.runtime.run_in_session(action)
 

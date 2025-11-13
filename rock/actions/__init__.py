@@ -7,7 +7,6 @@ from .sandbox.config import LocalSandboxRuntimeConfig, RemoteSandboxRuntimeConfi
 from .sandbox.request import (
     Action,
     BashAction,
-    BashInterruptAction,
     CloseBashSessionRequest,
     CloseSessionRequest,
     Command,
@@ -81,5 +80,4 @@ __all__ = [
     "LocalSandboxRuntimeConfig",
     "RemoteSandboxRuntimeConfig",
     "SandboxRuntimeConfig",
-    "BashInterruptAction",
 ]

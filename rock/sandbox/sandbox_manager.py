@@ -6,7 +6,6 @@ from fastapi import UploadFile
 
 from rock import env_vars
 from rock.actions import (
-    BashInterruptAction,
     BashObservation,
     CloseBashSessionResponse,
     CommandResponse,
@@ -239,7 +238,7 @@ class SandboxManager(BaseManager):
         return await self.async_ray_get(sandbox_actor.create_session.remote(request))
 
     @monitor_sandbox_operation()
-    async def run_in_session(self, action: Action | BashInterruptAction) -> BashObservation:
+    async def run_in_session(self, action: Action) -> BashObservation:
         sandbox_actor = await self.async_ray_get_actor(action.sandbox_id)
         if sandbox_actor is None:
             raise Exception(f"sandbox {action.sandbox_id} not found to run in session")

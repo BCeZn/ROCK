@@ -11,7 +11,6 @@ from fastapi import UploadFile
 
 from rock import env_vars
 from rock.actions import (
-    BashInterruptAction,
     BashObservation,
     CloseBashSessionResponse,
     CommandResponse,
@@ -75,7 +74,7 @@ class SandboxProxyService:
         return CreateBashSessionResponse(**response)
 
     @monitor_sandbox_operation()
-    async def run_in_session(self, action: BashAction | BashInterruptAction) -> BashObservation:
+    async def run_in_session(self, action: BashAction) -> BashObservation:
         sandbox_id = action.container_name
         await self._update_expire_time(sandbox_id)
         sandbox_status_dicts = await self.get_service_status(sandbox_id)

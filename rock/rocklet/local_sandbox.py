@@ -19,7 +19,6 @@ from typing_extensions import Self
 
 from rock.actions import (
     AbstractSandbox,
-    BashInterruptAction,
     BashObservation,
     CloseBashSessionResponse,
     CloseResponse,
@@ -209,43 +208,7 @@ class BashSession(Session):
             return ""
         return _strip_control_chars(output)
 
-    async def async_interrupt(self, action: BashInterruptAction) -> BashObservation:
-        loop = asyncio.get_running_loop()
-        return await loop.run_in_executor(self._executor, self.interrupt, action)
-
-    def interrupt(self, action: BashInterruptAction) -> BashObservation:
-        """Interrupt the session."""
-        output = ""
-        for _ in range(action.n_retry):
-            self.shell.sendintr()
-            expect_strings = action.expect + [self._ps1]
-            try:
-                expect_index = self.shell.expect(expect_strings, timeout=action.timeout)  # type: ignore
-                matched_expect_string = expect_strings[expect_index]
-            except Exception:
-                time.sleep(0.2)
-                continue
-            output += _strip_control_chars(self.shell.before)  # type: ignore
-            output += self._eat_following_output()
-            output = output.strip()
-            return BashObservation(output=output, exit_code=0, expect_string=matched_expect_string)
-        # Fall back to putting job to background and killing it there:
-        try:
-            self.shell.sendcontrol("z")
-            self.shell.expect(expect_strings, timeout=action.timeout)
-            output += self.shell.before
-            self.shell.sendline("kill -9 %1")
-            expect_index = self.shell.expect(expect_strings, timeout=action.timeout)  # type: ignore
-            matched_expect_string = expect_strings[expect_index]
-            output += self.shell.before
-            output += self._eat_following_output()
-            output = output.strip()
-            return BashObservation(output=output, exit_code=0, expect_string=matched_expect_string)
-        except pexpect.TIMEOUT:
-            msg = "Failed to interrupt session"
-            raise pexpect.TIMEOUT(msg)
-
-    async def run(self, action: BashAction | BashInterruptAction) -> BashObservation:
+    async def run(self, action: BashAction) -> BashObservation:
         """Run a bash action.
 
         Raises:
@@ -260,8 +223,6 @@ class BashSession(Session):
         if self.shell is None:
             msg = "shell not initialized"
             raise SessionNotInitializedError(msg)
-        if isinstance(action, BashInterruptAction):
-            return await self.async_interrupt(action)
         if action.is_interactive_command or action.is_interactive_quit:
             return await self._aync_run_interactive(action)
         r = await self._async_run_normal(action)
