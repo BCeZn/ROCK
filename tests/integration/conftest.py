@@ -9,11 +9,19 @@ import pytest
 import uvicorn
 from fastapi.testclient import TestClient
 
+from rock import env_vars
 from rock.utils import find_free_port, run_until_complete
 from rock.utils.concurrent_helper import run_until_complete
+from rock.utils.docker import DockerUtil
 from rock.utils.system import find_free_port
 
 TEST_API_KEY = "testkey"
+
+
+SKIP_IF_NO_DOCKER = pytest.mark.skipif(
+    not (DockerUtil.is_docker_available() and DockerUtil.is_image_available(env_vars.ROCK_ENVHUB_DEFAULT_DOCKER_IMAGE)),
+    reason=f"Requires Docker and image {env_vars.ROCK_ENVHUB_DEFAULT_DOCKER_IMAGE}",
+)
 
 
 @dataclass

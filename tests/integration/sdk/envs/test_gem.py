@@ -4,16 +4,12 @@ import pytest
 import rock
 from rock import env_vars
 from rock.sdk.envs import RockEnv
-from rock.utils.docker import DockerUtil
-from tests.integration.conftest import RemoteServer
+from tests.integration.conftest import SKIP_IF_NO_DOCKER, RemoteServer
 
 
 @pytest.mark.integration
 @pytest.mark.slow
-@pytest.mark.skipif(
-    not (DockerUtil.is_docker_available() and DockerUtil.is_image_available(env_vars.ROCK_ENVHUB_DEFAULT_DOCKER_IMAGE)),
-    reason=f"Requires Docker and image {env_vars.ROCK_ENVHUB_DEFAULT_DOCKER_IMAGE}",
-)
+@SKIP_IF_NO_DOCKER
 def test_rock_env(admin_remote_server: RemoteServer, monkeypatch):
     # For now, don't use the sandbox_server fixture approach, manually start admin for testing
     # Create environment

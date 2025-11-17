@@ -1,16 +1,12 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from rock import env_vars
-from rock.utils import DockerUtil
+from tests.integration.conftest import SKIP_IF_NO_DOCKER
 
 
 @pytest.mark.integration
 @pytest.mark.slow
-@pytest.mark.skipif(
-    not (DockerUtil.is_docker_available() and DockerUtil.is_image_available(env_vars.ROCK_ENVHUB_DEFAULT_DOCKER_IMAGE)),
-    reason=f"Requires Docker and image {env_vars.ROCK_ENVHUB_DEFAULT_DOCKER_IMAGE}",
-)
+@SKIP_IF_NO_DOCKER
 def test_env_api_sequence(admin_client: TestClient):
     """Test the complete workflow of env API in order"""
     client = admin_client

@@ -5,7 +5,7 @@ import pytest
 
 from rock import env_vars
 from rock.envhub import DeleteEnvRequest, DockerEnvHub, GetEnvRequest, ListEnvsRequest, RegisterRequest
-from rock.utils import DockerUtil
+from tests.integration.conftest import SKIP_IF_NO_DOCKER
 
 # ============ Basic functionality tests ============
 
@@ -298,10 +298,7 @@ def test_init_default_env_creates_default_environment(docker_env_hub):
     assert default_env.owner == "ENVHUB"
 
 
-@pytest.mark.skipif(
-    not (DockerUtil.is_docker_available() and DockerUtil.is_image_available(env_vars.ROCK_ENVHUB_DEFAULT_DOCKER_IMAGE)),
-    reason=f"Requires Docker and image {env_vars.ROCK_ENVHUB_DEFAULT_DOCKER_IMAGE}",
-)
+@SKIP_IF_NO_DOCKER
 def test_check_envs_available_basic(docker_env_hub):
     """Test that check_envs_available checks default env properly - should return False without docker installed."""
     result = docker_env_hub.check_envs_available()
@@ -310,10 +307,7 @@ def test_check_envs_available_basic(docker_env_hub):
     assert isinstance(result, bool)
 
 
-@pytest.mark.skipif(
-    not (DockerUtil.is_docker_available() and DockerUtil.is_image_available(env_vars.ROCK_ENVHUB_DEFAULT_DOCKER_IMAGE)),
-    reason=f"Requires Docker and image {env_vars.ROCK_ENVHUB_DEFAULT_DOCKER_IMAGE}",
-)
+@SKIP_IF_NO_DOCKER
 def test_check_envs_available_with_existing_default_image():
     """Test check_envs_available with mocked docker functionality."""
 
