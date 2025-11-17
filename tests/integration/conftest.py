@@ -1,4 +1,5 @@
 import socket
+import subprocess
 import threading
 import time
 from dataclasses import dataclass, field
@@ -10,6 +11,8 @@ from fastapi.testclient import TestClient
 import rock
 import rock.rocklet.server
 from rock.utils import find_free_port, run_until_complete
+from rock.utils.concurrent_helper import run_until_complete
+from rock.utils.system import find_free_port
 
 TEST_API_KEY = "testkey"
 
@@ -55,3 +58,43 @@ def rocklet_remote_server() -> RemoteServer:
 def rocklet_test_client():
     client = TestClient(rock.rocklet.server.app)
     yield client
+
+
+@pytest.fixture(scope="session")
+def admin_remote_server():
+    port = run_until_complete(find_free_port())
+
+    process = subprocess.Popen(
+        [
+            "admin",
+            "--env",
+            "local",
+            "--role",
+            "admin",
+            "--port",
+            str(port),
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+
+    # Wait for the server to start
+    max_retries = 10
+    retry_delay = 3
+    for _ in range(max_retries):
+        try:
+            with socket.create_connection(("127.0.0.1", port), timeout=1):
+                break
+        except (TimeoutError, ConnectionRefusedError):
+            time.sleep(retry_delay)
+    else:
+        process.kill()
+        pytest.fail("Server did not start within the expected time")
+
+    yield RemoteServer(port)
+
+    process.terminate()
+    try:
+        process.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        process.kill()
