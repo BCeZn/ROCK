@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 from rock.envhub.server import app, initialize_env_hub
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def envhub_client():
     """Create test client with temporary database"""
     # Create temporary database file
