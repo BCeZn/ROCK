@@ -30,7 +30,7 @@ async def test_sandbox_file_operations(admin_remote_server: RemoteServer):
     config = SandboxConfig(
         image="python:3.11",
         startup_timeout=60,
-        base_url=f"http://127.0.0.1:{admin_remote_server.port}",
+        base_url=f"{admin_remote_server.endpoint}:{admin_remote_server.port}",
     )
     sandbox = Sandbox(config)
 
