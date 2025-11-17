@@ -130,8 +130,6 @@ split-on-trailing-comma = true
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-testpaths = ["tests", "intetest"]
-env = ["ROCK_LOGGING_PATH=./data/logs"]
 addopts = [
     "-v",               # Verbose output
     "-p",

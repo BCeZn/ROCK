@@ -17,6 +17,26 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Check Docker availability
+      run: |
+        echo "=== Checking Docker installation ==="
+        docker --version
+        docker info
+        echo ""
+        echo "=== Checking Docker daemon status ==="
+        systemctl status docker --no-pager || true
+
+    - name: Test Docker pull
+      run: |
+        echo "=== Attempting to pull python:3.11 image ==="
+        docker pull python:3.11
+        echo ""
+        echo "=== Verifying pulled image ==="
+        docker images | grep python
+        echo ""
+        echo "=== Testing python:3.11 container ==="
+        docker run --rm python:3.11 python --version
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -31,10 +51,15 @@ jobs:
       run: |
         uv sync --all-extras --group test
 
-    - name: Run pytest
-      run: |
-        # Create necessary directories for tests
-        mkdir -p data/logs
 
-        # Run tests with pytest configuration from pyproject.toml
-        uv run pytest
+    - name: Run fast tests
+      run: |
+        mkdir -p data/logs
+        echo "🚀 Running fast tests..."
+        uv run pytest -m "not slow" --reruns 1
+
+    - name: Run slow tests
+      if: success()
+      run: |
+        echo "🐌 Running slow tests..."
+        uv run pytest -m "slow" --reruns 1
