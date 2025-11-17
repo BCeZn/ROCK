@@ -1,6 +1,4 @@
-import os
 import socket
-import tempfile
 import threading
 import time
 from dataclasses import dataclass, field
@@ -11,7 +9,6 @@ from fastapi.testclient import TestClient
 
 import rock
 import rock.rocklet.server
-from rock.envhub.server import app, initialize_env_hub
 from rock.utils import find_free_port, run_until_complete
 
 TEST_API_KEY = "testkey"
@@ -58,24 +55,3 @@ def rocklet_remote_server() -> RemoteServer:
 def rocklet_test_client():
     client = TestClient(rock.rocklet.server.app)
     yield client
-
-
-@pytest.fixture(scope="session")
-def envhub_client():
-    """Create test client with temporary database"""
-    # Create temporary database file
-    with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp_file:
-        db_path = tmp_file.name
-
-    db_url = f"sqlite:///{db_path}"
-
-    # Initialize EnvHub
-    initialize_env_hub(db_url=db_url)
-
-    # Create test client
-    with TestClient(app) as test_client:
-        yield test_client
-
-    # Clean up temporary database file
-    if os.path.exists(db_path):
-        os.unlink(db_path)
