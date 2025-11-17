@@ -1,29 +1,8 @@
-import sys
-
 import pytest
 from fastapi.testclient import TestClient
 
 from rock import env_vars
 from rock.utils import DockerUtil
-
-
-@pytest.fixture(name="admin_client", scope="session")
-def admin_client_fixture():
-    """Create test client using TestClient"""
-    # Save original sys.argv
-    original_argv = sys.argv.copy()
-    # Modify sys.argv
-    sys.argv = ["main.py", "--env", "local", "--role", "admin"]
-    try:
-        from rock.admin.main import app, gem_router
-
-        # Register env router
-        app.include_router(gem_router, prefix="/apis/v1/envs/gem", tags=["gem"])
-        with TestClient(app) as client:
-            yield client
-    finally:
-        # Restore original sys.argv
-        sys.argv = original_argv
 
 
 @pytest.mark.integration

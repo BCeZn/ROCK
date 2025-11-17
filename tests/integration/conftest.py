@@ -1,5 +1,6 @@
 import socket
 import subprocess
+import sys
 import threading
 import time
 from dataclasses import dataclass, field
@@ -8,8 +9,6 @@ import pytest
 import uvicorn
 from fastapi.testclient import TestClient
 
-import rock
-import rock.rocklet.server
 from rock.utils import find_free_port, run_until_complete
 from rock.utils.concurrent_helper import run_until_complete
 from rock.utils.system import find_free_port
@@ -28,13 +27,24 @@ def test_api_key():
     return TEST_API_KEY
 
 
+## Rocklet Client & Remote Server
+
+
+@pytest.fixture(scope="session")
+def rocklet_test_client():
+    from rock.rocklet.server import app
+
+    client = TestClient(app)
+    yield client
+
+
 @pytest.fixture(scope="session")
 def rocklet_remote_server() -> RemoteServer:
     port = run_until_complete(find_free_port())
-    print(f"Using port {port} for the remote server")
+    from rock.rocklet.server import app
 
     def run_server():
-        uvicorn.run(rock.rocklet.server.app, host="127.0.0.1", port=port, log_level="error")
+        uvicorn.run(app, host="127.0.0.1", port=port, log_level="error")
 
     thread = threading.Thread(target=run_server, daemon=True)
     thread.start()
@@ -54,10 +64,26 @@ def rocklet_remote_server() -> RemoteServer:
     return RemoteServer(port)
 
 
-@pytest.fixture(scope="session")
-def rocklet_test_client():
-    client = TestClient(rock.rocklet.server.app)
-    yield client
+## Admin Client & Remote Server
+
+
+@pytest.fixture(name="admin_client", scope="session")
+def admin_client_fixture():
+    """Create test client using TestClient"""
+    # Save original sys.argv
+    original_argv = sys.argv.copy()
+    # Modify sys.argv
+    sys.argv = ["main.py", "--env", "local", "--role", "admin"]
+    try:
+        from rock.admin.main import app, gem_router
+
+        # Register env router
+        app.include_router(gem_router, prefix="/apis/v1/envs/gem", tags=["gem"])
+        with TestClient(app) as client:
+            yield client
+    finally:
+        # Restore original sys.argv
+        sys.argv = original_argv
 
 
 @pytest.fixture(scope="session")
