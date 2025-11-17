@@ -1,4 +1,5 @@
 import logging
+import uuid
 from pathlib import Path
 
 import pytest
@@ -20,3 +21,9 @@ def configure_logging():
         project_root = Path(__file__).parent.parent  # Project root directory
         log_dir = str(project_root / log_dir)
         env_vars.ROCK_LOGGING_PATH = log_dir
+
+
+@pytest.fixture(name="container_name")
+def random_container_name() -> str:
+    container_name = uuid.uuid4().hex
+    return container_name
