@@ -15,7 +15,7 @@ def configure_logging():
         force=True,  # Force reconfiguration
     )
     log_dir = env_vars.ROCK_LOGGING_PATH
-    if not Path(log_dir).is_absolute():
+    if log_dir and not Path(log_dir).is_absolute():
         # Relative to project root directory
         project_root = Path(__file__).parent.parent  # Project root directory
         log_dir = str(project_root / log_dir)
