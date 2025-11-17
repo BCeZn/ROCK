@@ -4,23 +4,21 @@ import gem
 from fastapi.testclient import TestClient
 from gem.envs.game_env.sokoban import SokobanEnv
 
-from tests.integration.conftest import TEST_API_KEY
-
 logger = logging.getLogger(__name__)
 
 
-def test_gem(rocklet_test_client: TestClient):
+def test_gem(rocklet_test_client: TestClient, test_api_key):
     env_id = "game:Sokoban-v0-easy"
     sandbox_id = "test_gem"
     gem_env: SokobanEnv = gem.make(env_id)
     make_response = rocklet_test_client.post(
-        "/env/make", json={"env_id": env_id, "sandbox_id": sandbox_id}, headers={"X-API-Key": TEST_API_KEY}
+        "/env/make", json={"env_id": env_id, "sandbox_id": sandbox_id}, headers={"X-API-Key": test_api_key}
     )
     assert make_response.status_code == 200
     sandbox_id = make_response.json()["sandbox_id"]
 
     reset_response = rocklet_test_client.post(
-        "/env/reset", json={"sandbox_id": sandbox_id, "seed": 42}, headers={"X-API-Key": TEST_API_KEY}
+        "/env/reset", json={"sandbox_id": sandbox_id, "seed": 42}, headers={"X-API-Key": test_api_key}
     )
     assert reset_response.status_code == 200
     reset_data = reset_response.json()
@@ -33,7 +31,7 @@ def test_gem(rocklet_test_client: TestClient):
         step_response = rocklet_test_client.post(
             "/env/step",
             json={"sandbox_id": sandbox_id, "action": action},
-            headers={"X-API-Key": TEST_API_KEY},
+            headers={"X-API-Key": test_api_key},
         )
         assert step_response.status_code == 200
         step_data = step_response.json()
@@ -49,6 +47,6 @@ def test_gem(rocklet_test_client: TestClient):
             break
 
     close_response = rocklet_test_client.post(
-        "/env/close", json={"sandbox_id": sandbox_id}, headers={"X-API-Key": TEST_API_KEY}
+        "/env/close", json={"sandbox_id": sandbox_id}, headers={"X-API-Key": test_api_key}
     )
     assert close_response.status_code == 200

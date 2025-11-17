@@ -23,6 +23,11 @@ class RemoteServer:
     headers: dict[str, str] = field(default_factory=lambda: {"X-API-Key": TEST_API_KEY})
 
 
+@pytest.fixture
+def test_api_key():
+    return TEST_API_KEY
+
+
 @pytest.fixture(scope="session")
 def rocklet_remote_server() -> RemoteServer:
     port = run_until_complete(find_free_port())
