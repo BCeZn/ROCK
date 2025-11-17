@@ -1,8 +1,12 @@
+import logging
+
 import gem
 from fastapi.testclient import TestClient
 from gem.envs.game_env.sokoban import SokobanEnv
 
-from tests.unit.conftest import TEST_API_KEY
+from tests.integration.conftest import TEST_API_KEY
+
+logger = logging.getLogger(__name__)
 
 
 def test_gem(rocklet_test_client: TestClient):
@@ -19,7 +23,10 @@ def test_gem(rocklet_test_client: TestClient):
         "/env/reset", json={"sandbox_id": sandbox_id, "seed": 42}, headers={"X-API-Key": TEST_API_KEY}
     )
     assert reset_response.status_code == 200
-    observation, info = reset_response.json()
+    reset_data = reset_response.json()
+    observation = reset_data["observation"]
+    info = reset_data["info"]
+    logger.info(f"Reset: observation is {observation}, info is {info}")
 
     for _ in range(10):
         action = gem_env.sample_random_action()
@@ -29,7 +36,15 @@ def test_gem(rocklet_test_client: TestClient):
             headers={"X-API-Key": TEST_API_KEY},
         )
         assert step_response.status_code == 200
-        next_observation, reward, terminated, truncated, info = step_response.json()
+        step_data = step_response.json()
+        next_observation = step_data["observation"]
+        reward = step_data["reward"]
+        terminated = step_data["terminated"]
+        truncated = step_data["truncated"]
+        info = step_data["info"]
+        logger.info(
+            f"Step: next_observation is {next_observation}, reward is {reward}, terminated is {terminated}, truncated is {truncated}, info is {info}"
+        )
         if terminated or truncated:
             break
 
