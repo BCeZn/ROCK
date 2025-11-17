@@ -56,7 +56,7 @@ jobs:
       run: |
         mkdir -p data/logs
         echo "🚀 Running fast tests..."
-        uv run pytest -m "not slow" -reruns 1
+        uv run pytest -m "not slow" --reruns 1
 
     - name: Run slow tests
       if: success()
