@@ -26,6 +26,8 @@ def admin_client_fixture():
         sys.argv = original_argv
 
 
+@pytest.mark.integration
+@pytest.mark.slow
 @pytest.mark.skipif(
     not (DockerUtil.is_docker_available() and DockerUtil.is_image_available(env_vars.ROCK_ENVHUB_DEFAULT_DOCKER_IMAGE)),
     reason=f"Requires Docker and image {env_vars.ROCK_ENVHUB_DEFAULT_DOCKER_IMAGE}",

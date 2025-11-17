@@ -51,10 +51,15 @@ jobs:
       run: |
         uv sync --all-extras --group test
 
-    - name: Run pytest
-      run: |
-        # Create necessary directories for tests
-        mkdir -p data/logs
 
-        # Run tests with pytest configuration from pyproject.toml
-        uv run pytest
+    - name: Run fast tests
+      run: |
+        mkdir -p data/logs
+        echo "🚀 Running fast tests..."
+        uv run pytest -m "not slow" -v --tb=short
+
+    - name: Run slow tests
+      if: success()
+      run: |
+        echo "🐌 Running slow tests..."
+        uv run pytest -m "slow" -v --tb=short
