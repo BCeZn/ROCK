@@ -3,7 +3,7 @@ import subprocess
 import sys
 import threading
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 import pytest
 import uvicorn
@@ -15,9 +15,6 @@ from rock.utils.concurrent_helper import run_until_complete
 from rock.utils.docker import DockerUtil
 from rock.utils.system import find_free_port
 
-TEST_API_KEY = "testkey"
-
-
 SKIP_IF_NO_DOCKER = pytest.mark.skipif(
     not (DockerUtil.is_docker_available() and DockerUtil.is_image_available(env_vars.ROCK_ENVHUB_DEFAULT_DOCKER_IMAGE)),
     reason=f"Requires Docker and image {env_vars.ROCK_ENVHUB_DEFAULT_DOCKER_IMAGE}",
@@ -27,12 +24,7 @@ SKIP_IF_NO_DOCKER = pytest.mark.skipif(
 @dataclass
 class RemoteServer:
     port: int
-    headers: dict[str, str] = field(default_factory=lambda: {"X-API-Key": TEST_API_KEY})
-
-
-@pytest.fixture
-def test_api_key():
-    return TEST_API_KEY
+    endpoint: str = "http://127.0.0.1"
 
 
 ## Rocklet Client & Remote Server

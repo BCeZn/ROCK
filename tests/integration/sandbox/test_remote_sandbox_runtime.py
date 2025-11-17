@@ -7,19 +7,15 @@ from gem.envs.game_env.sokoban import SokobanEnv
 logger = logging.getLogger(__name__)
 
 
-def test_gem(rocklet_test_client: TestClient, test_api_key):
+def test_gem(rocklet_test_client: TestClient):
     env_id = "game:Sokoban-v0-easy"
     sandbox_id = "test_gem"
     gem_env: SokobanEnv = gem.make(env_id)
-    make_response = rocklet_test_client.post(
-        "/env/make", json={"env_id": env_id, "sandbox_id": sandbox_id}, headers={"X-API-Key": test_api_key}
-    )
+    make_response = rocklet_test_client.post("/env/make", json={"env_id": env_id, "sandbox_id": sandbox_id})
     assert make_response.status_code == 200
     sandbox_id = make_response.json()["sandbox_id"]
 
-    reset_response = rocklet_test_client.post(
-        "/env/reset", json={"sandbox_id": sandbox_id, "seed": 42}, headers={"X-API-Key": test_api_key}
-    )
+    reset_response = rocklet_test_client.post("/env/reset", json={"sandbox_id": sandbox_id, "seed": 42})
     assert reset_response.status_code == 200
     reset_data = reset_response.json()
     observation = reset_data["observation"]
@@ -31,7 +27,6 @@ def test_gem(rocklet_test_client: TestClient, test_api_key):
         step_response = rocklet_test_client.post(
             "/env/step",
             json={"sandbox_id": sandbox_id, "action": action},
-            headers={"X-API-Key": test_api_key},
         )
         assert step_response.status_code == 200
         step_data = step_response.json()
@@ -47,6 +42,7 @@ def test_gem(rocklet_test_client: TestClient, test_api_key):
             break
 
     close_response = rocklet_test_client.post(
-        "/env/close", json={"sandbox_id": sandbox_id}, headers={"X-API-Key": test_api_key}
+        "/env/close",
+        json={"sandbox_id": sandbox_id},
     )
     assert close_response.status_code == 200
