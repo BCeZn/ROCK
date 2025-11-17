@@ -56,10 +56,10 @@ jobs:
       run: |
         mkdir -p data/logs
         echo "🚀 Running fast tests..."
-        uv run pytest -m "not slow" -v --tb=short
+        uv run pytest -m "not slow"
 
     - name: Run slow tests
       if: success()
       run: |
         echo "🐌 Running slow tests..."
-        uv run pytest -m "slow" -v --tb=short
+        uv run pytest -m "slow"

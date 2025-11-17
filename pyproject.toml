@@ -130,7 +130,6 @@ split-on-trailing-comma = true
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-testpaths = ["tests", "intetest"]
 addopts = [
     "-v",               # Verbose output
     "-p",
