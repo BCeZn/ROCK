@@ -1,6 +1,6 @@
 import requests
 
-from tests.conftest import RemoteServer
+from tests.unit.conftest import RemoteServer
 
 headers = {"X-API-Key": "your_secret_api_key_here"}
 

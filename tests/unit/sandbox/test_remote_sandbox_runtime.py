@@ -2,7 +2,7 @@ import gem
 from fastapi.testclient import TestClient
 from gem.envs.game_env.sokoban import SokobanEnv
 
-from tests.conftest import TEST_API_KEY
+from tests.unit.conftest import TEST_API_KEY
 
 
 def test_gem(rocklet_test_client: TestClient):
