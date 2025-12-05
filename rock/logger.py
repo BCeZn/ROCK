@@ -85,8 +85,6 @@ def init_logger(name: str | None = None):
             handler = logging.FileHandler(log_file_path)
         # Priority 2: Skip stdout for specific logger patterns (no output at all)
         elif _should_skip_stdout(logger_name):
-            # Don't add any handler, effectively disabling output for these loggers
-            # Set a NullHandler to prevent propagation to parent loggers
             return logger
         # Priority 3: Default to stdout for other loggers
         else:
