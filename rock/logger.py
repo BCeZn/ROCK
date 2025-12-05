@@ -54,11 +54,7 @@ def _should_skip_stdout(logger_name: str) -> bool:
         True if logger should skip stdout, False otherwise
     """
     # Check if logger name matches specific patterns that should not output to stdout
-    if (
-        logger_name.startswith("rock.actions.local")
-        or logger_name.startswith("rocklet.")
-        or logger_name.startswith("accessLog")
-    ):
+    if logger_name.startswith("rock.actions.local") or logger_name.startswith("rocklet."):
         return True
     return False
 
