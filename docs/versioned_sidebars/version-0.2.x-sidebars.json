@@ -30,8 +30,6 @@
       "label": "References",
       "items": [
         "References/api",
-        "References/model-service",
-        "References/sandbox-agent",
         {
           "type": "category",
           "label": "Python SDK References",
