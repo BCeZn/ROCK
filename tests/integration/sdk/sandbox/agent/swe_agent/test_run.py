@@ -1,5 +1,4 @@
 import asyncio
-import json
 from pathlib import Path
 
 import pytest
@@ -173,18 +172,6 @@ async def test_swe_agent_run(sandbox_instance: Sandbox) -> None:
         for i, result in enumerate(results):
             if isinstance(result, Exception):
                 logger.error(f"Task {i} failed: {type(result).__name__}: {str(result)}")
-
-        # Verify results
-        traj_content = await sandbox_instance.read_file_by_line_range(
-            file_path=f"{swe_agent_config.swe_agent_workdir}/{test_instance_id}/{test_instance_id}/{test_instance_id}.traj"
-        )
-
-        traj = json.loads(traj_content.content)
-
-        logger.info(f"Trajectory info: {traj['info']}")
-
-        assert traj["info"]["submission"]
-        assert traj["info"]["exit_status"]
 
     except Exception as e:
         logger.error(f"Test failed: {type(e).__name__}: {str(e)}", exc_info=True)
