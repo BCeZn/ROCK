@@ -1,4 +1,5 @@
 import asyncio
+import json
 from pathlib import Path
 
 import pytest
@@ -9,7 +10,6 @@ from rock.logger import init_logger
 from rock.sdk.sandbox.agent.swe_agent import DEFAULT_RUN_SINGLE_CONFIG, SweAgent, SweAgentConfig
 from rock.sdk.sandbox.client import Sandbox
 from rock.sdk.sandbox.model_service.base import ModelServiceConfig
-from tests.integration.conftest import SKIP_IF_NO_DOCKER
 
 logger = init_logger(__name__)
 
@@ -106,15 +106,15 @@ async def _init_git_repository(sandbox: Sandbox, repo_path: str) -> None:
             raise RuntimeError(f"Failed to execute: {cmd}")
 
 
-@pytest.mark.need_admin
-@SKIP_IF_NO_DOCKER
+# @pytest.mark.need_admin
+# @SKIP_IF_NO_DOCKER
 @pytest.mark.asyncio
 async def test_swe_agent_run(sandbox_instance: Sandbox) -> None:
     """Test SWE-Agent installation with integrated model service."""
 
     python_install_cmd = _get_python_install_cmd()
     project_path = "/root/test_swe_agent"
-
+    test_instance_id = "test_instance_id"
     try:
         # Initialize SWE-Agent configuration
         model_service_config = ModelServiceConfig(
@@ -159,7 +159,7 @@ async def test_swe_agent_run(sandbox_instance: Sandbox) -> None:
             sandbox_instance.agent.run(
                 problem_statement="rename 1.txt to 2.txt",
                 project_path=project_path,
-                instance_id="test_instance_id",
+                instance_id=test_instance_id,
                 agent_run_timeout=1800,
                 agent_run_check_interval=30,
             )
@@ -175,8 +175,16 @@ async def test_swe_agent_run(sandbox_instance: Sandbox) -> None:
                 logger.error(f"Task {i} failed: {type(result).__name__}: {str(result)}")
 
         # Verify results
-        result = await sandbox_instance.execute(Command(command=["bash", "-c", f"ls {project_path}"]))
-        assert result.exit_code == 0, f"Failed to list {project_path}"
+        traj_content = await sandbox_instance.read_file_by_line_range(
+            file_path=f"{swe_agent_config.swe_agent_workdir}/{test_instance_id}/{test_instance_id}/{test_instance_id}.traj"
+        )
+
+        traj = json.loads(traj_content.content)
+
+        logger.info(f"Trajectory info: {traj['info']}")
+
+        assert traj["info"]["submission"]
+        assert traj["info"]["exit_status"]
 
     except Exception as e:
         logger.error(f"Test failed: {type(e).__name__}: {str(e)}", exc_info=True)
