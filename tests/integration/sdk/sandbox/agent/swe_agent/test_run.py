@@ -109,7 +109,7 @@ async def _init_git_repository(sandbox: Sandbox, repo_path: str) -> None:
 @pytest.mark.need_admin
 @SKIP_IF_NO_DOCKER
 @pytest.mark.asyncio
-async def test_swe_agent_with_model_service(sandbox_instance: Sandbox) -> None:
+async def test_swe_agent_run(sandbox_instance: Sandbox) -> None:
     """Test SWE-Agent installation with integrated model service."""
 
     python_install_cmd = _get_python_install_cmd()
