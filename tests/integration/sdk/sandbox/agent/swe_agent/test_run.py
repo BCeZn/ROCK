@@ -9,6 +9,7 @@ from rock.logger import init_logger
 from rock.sdk.sandbox.agent.swe_agent import DEFAULT_RUN_SINGLE_CONFIG, SweAgent, SweAgentConfig
 from rock.sdk.sandbox.client import Sandbox
 from rock.sdk.sandbox.model_service.base import ModelServiceConfig
+from tests.integration.conftest import SKIP_IF_NO_DOCKER
 
 logger = init_logger(__name__)
 
@@ -105,8 +106,8 @@ async def _init_git_repository(sandbox: Sandbox, repo_path: str) -> None:
             raise RuntimeError(f"Failed to execute: {cmd}")
 
 
-# @pytest.mark.need_admin
-# @SKIP_IF_NO_DOCKER
+@pytest.mark.need_admin
+@SKIP_IF_NO_DOCKER
 @pytest.mark.asyncio
 async def test_swe_agent_run(sandbox_instance: Sandbox) -> None:
     """Test SWE-Agent installation with integrated model service."""
