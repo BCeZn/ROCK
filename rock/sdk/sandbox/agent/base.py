@@ -120,7 +120,6 @@ class DefaultAgent(Agent):
         self,
         problem_statement: str,
         project_path: str,
-        instance_id: str | None = None,
         agent_run_timeout: int = 1800,
         agent_run_check_interval: int = 30,
         **kwargs: Any,

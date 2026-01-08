@@ -170,6 +170,8 @@ class SweAgentConfig(DefaultAgentConfig):
 
     session_envs: dict[str, str] = {}
 
+    instance_id: str = "swe-agent-instance-id"
+
 
 class SweAgent(DefaultAgent):
     """SWE-agent implementation with integrated ModelService support.
@@ -361,7 +363,6 @@ class SweAgent(DefaultAgent):
         self,
         problem_statement: str,
         project_path: str,
-        instance_id: str | None = None,
         agent_run_timeout: int = 1800,
         agent_run_check_interval: int = 30,
         **kwargs: Any,
@@ -375,7 +376,6 @@ class SweAgent(DefaultAgent):
         Args:
             problem_statement: The problem statement for the task
             project_path: Path to the target project
-            instance_id: The instance identifier for the run
             agent_run_timeout: Maximum seconds to wait for agent execution (default: 1800)
             agent_run_check_interval: Seconds between status checks (default: 30)
 
@@ -385,7 +385,7 @@ class SweAgent(DefaultAgent):
         Raises:
             Exception: If agent execution fails
         """
-        instance_id = instance_id or "swe-agent-instance-id"
+        instance_id = self.config.instance_id
         sandbox_id = self._sandbox.sandbox_id
         start_time = time.time()
 
