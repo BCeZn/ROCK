@@ -3,7 +3,7 @@ from __future__ import annotations  # Postpone annotation evaluation to avoid ci
 import asyncio
 import time
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from httpx import ReadTimeout
 
@@ -113,6 +113,18 @@ class DefaultAgent(Agent):
         Raises:
             Exception: If installation fails
         """
+        pass
+
+    @abstractmethod
+    async def run(
+        self,
+        problem_statement: str,
+        project_path: str,
+        instance_id: str | None = None,
+        agent_run_timeout: int = 1800,
+        agent_run_check_interval: int = 30,
+        **kwargs: Any,
+    ) -> Observation:
         pass
 
     async def _setup_session(self):

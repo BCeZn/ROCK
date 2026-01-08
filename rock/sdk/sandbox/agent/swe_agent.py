@@ -361,9 +361,10 @@ class SweAgent(DefaultAgent):
         self,
         problem_statement: str,
         project_path: str,
-        instance_id: str,
+        instance_id: str | None = None,
         agent_run_timeout: int = 1800,
         agent_run_check_interval: int = 30,
+        **kwargs: Any,
     ) -> Observation:
         """Execute SWE-agent with the specified problem statement and project path.
 
@@ -384,6 +385,7 @@ class SweAgent(DefaultAgent):
         Raises:
             Exception: If agent execution fails
         """
+        instance_id = instance_id or "swe-agent-instance-id"
         sandbox_id = self._sandbox.sandbox_id
         start_time = time.time()
 
