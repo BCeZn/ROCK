@@ -12,7 +12,6 @@ from rock.actions import CreateBashSessionRequest, Observation
 from rock.actions.sandbox.base import AbstractSandbox
 from rock.logger import init_logger
 from rock.sdk.sandbox.agent.config import DefaultAgentConfig
-from rock.sdk.sandbox.client import RunMode
 from rock.sdk.sandbox.model_service.base import ModelService
 
 if TYPE_CHECKING:
@@ -193,6 +192,7 @@ class DefaultAgent(Agent):
                     logger.debug(
                         f"[{sandbox_id}] Executing long-running pre-startup command {idx}/{len(long_running_cmd_list)}: {command[:100]}... (timeout: {timeout}s)"
                     )
+                    from rock.sdk.sandbox.client import RunMode
 
                     result = await self._sandbox.arun(
                         cmd=f"bash -c {shlex.quote(command)}",
