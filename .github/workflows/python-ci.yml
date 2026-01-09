@@ -49,7 +49,7 @@ jobs:
 
     - name: Set up project (install dependencies without building)
       run: |
-        uv sync --all-extras --group test
+        uv sync --all-extras --group test --python 3.11
 
 
     - name: Run fast tests
