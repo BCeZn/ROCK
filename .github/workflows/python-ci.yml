@@ -28,7 +28,7 @@ jobs:
       if: success()
       run: |
         echo "⚡ Running ray tests..."
-        uv run pytest -m "need_ray" --reruns 1
+        uv run pytest -n auto -m "need_ray" --reruns 1
 
     - name: Run tests need admin
       if: success()
