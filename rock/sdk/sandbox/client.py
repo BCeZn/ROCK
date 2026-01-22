@@ -45,13 +45,15 @@ from rock.sdk.common.exceptions import (
     InvalidParameterRockException,
     raise_for_code,
 )
-from rock.sdk.sandbox.agent.base import Agent
+from rock.sdk.sandbox.agent.rock_agent import RockAgent
 from rock.sdk.sandbox.config import SandboxConfig, SandboxGroupConfig
+from rock.sdk.sandbox.deploy import Deploy
 from rock.sdk.sandbox.file_system import FileSystem, LinuxFileSystem
 from rock.sdk.sandbox.model_service.base import ModelService
 from rock.sdk.sandbox.network import Network
 from rock.sdk.sandbox.process import Process
 from rock.sdk.sandbox.remote_user import LinuxRemoteUser, RemoteUser
+from rock.sdk.sandbox.runtime_env.base import RuntimeEnv, RuntimeEnvId
 from rock.utils import HttpUtils, extract_nohup_pid, retry_async
 
 logger = logging.getLogger(__name__)
@@ -71,12 +73,14 @@ class Sandbox(AbstractSandbox):
     _host_ip: str | None = None
     _oss_bucket: oss2.Bucket | None = None
     _cluster: str | None = None
-    agent: Agent | None = None
+    agent: RockAgent | None = None
     model_service: ModelService | None = None
     remote_user: RemoteUser | None = None
     process: Process | None = None
     network: Network | None = None
     fs: FileSystem | None = None
+    runtime_envs: dict[RuntimeEnvId, RuntimeEnv]
+    deploy: Deploy | None = None
 
     def __init__(self, config: SandboxConfig):
         self._pod_name = None
@@ -95,6 +99,9 @@ class Sandbox(AbstractSandbox):
         self.process = Process(self)
         self.network = Network(self)
         self.fs = LinuxFileSystem(self)
+        self.deploy = Deploy(self)
+        self.runtime_envs = {}
+        self.agent = RockAgent(self)
 
     @property
     def sandbox_id(self) -> str:
