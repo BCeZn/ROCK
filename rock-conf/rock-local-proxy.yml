@@ -2,6 +2,16 @@ ray:
     runtime_env:
         working_dir: ./
         pip: ./requirements_sandbox_actor.txt
+        excludes:
+          - ".venv"
+          - ".git"
+          - "dist"
+          - "docs"
+          - "*.egg-info"
+          - "__pycache__"
+          - ".ruff_cache"
+          - "data"
+          - ".tmp"
     namespace: "rock-sandbox-local"
 
 warmup:
